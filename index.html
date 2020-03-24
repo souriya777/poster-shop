@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="/public/style.css">
     <script src="reload/reload.js" defer></script>
     <script src="node_modules/vue/dist/vue.js" defer></script>
+    <script src="node_modules/vue-resource/dist/vue-resource.min.js" defer></script>
     <script src="public/script.js" defer></script>
 </head>
 <body>
@@ -21,20 +22,34 @@
                 <img src="public/logo.png">
                 <h1>Vue.js Poster Shop</h1>
             </div>
-            <form class="search-bar">
+            <form class="search-bar" @submit.prevent="onSearch">
+              <input type="text" placeholder="Search for posters" v-model="searchValue" required>
               <input type="submit" value="Search" class="btn">
             </form>
+            <p>Try search terms <em>cat, dog, flower</em></p>
         </div>
     </div>
     <div class="main container">
         <div class="products">
+          <div v-if="loading">
+            Loading...
+          </div>
+          <div class="search-results" v-else>
+            Found {{ products.length }} results for search term <em>{{ lastSearchValue }}</em>.
+          </div>
           <div
             v-for="product in products"
             v-bind:key="product.id"
             class="product"
           >
             <div>
+              <div class="product-image">
+                <img :src="product.thumb">
+              </div>
+            </div>
+            <div>
               <h4 class="product-title">{{ product.title }}</h4>
+              <p class="product-price"><strong>{{ product.price | currency }}</strong></p>
               <button
                 class="add-to-cart btn"
                 v-on:click="addToCart(product)"
